@@ -1,5 +1,7 @@
 # LLM Benchmark
 
+[中文文档](README_CN.md) | English
+
 Local LLM model performance testing toolkit with multi-model comparison support.
 
 ## Features

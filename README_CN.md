@@ -1,5 +1,7 @@
 # LLM Benchmark
 
+[English](README.md) | 中文文档
+
 本地 LLM 模型性能测试工具集，支持多种模型对比测试。
 
 ## 功能特性
