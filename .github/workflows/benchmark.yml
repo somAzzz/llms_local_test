@@ -1,0 +1,24 @@
+name: Benchmark
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          pip install requests
+      - name: Run benchmark
+        run: |
+          echo "Run: python scripts/benchmark.py"
+          echo "::warning::This requires a running vLLM endpoint"

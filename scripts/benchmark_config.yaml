@@ -1,0 +1,300 @@
+# LLM Benchmark Configuration
+# Modify this file to customize test parameters
+
+# API Configuration
+api:
+  url: "http://localhost:8000/v1/chat/completions"
+  timeout: 300  # seconds
+
+# Default model (used when auto-detection fails)
+model:
+  default: "Qwen/Qwen3-Coder-Next-FP8"
+  auto_detect_priority: ["glm", "qwen"]  # order of preference for auto-detection
+
+# Test Configuration
+test:
+  default_cases: 6
+  complex_cases_max: 10
+  temperature: 0.7
+
+# Model-specific configurations
+models:
+  # GLM-4.7-Flash configuration
+  glm-4.7-flash:
+    enabled: true
+    test_suite: "lightweight"  # lightweight, standard, complex
+    prefer_lightweight: true
+    max_model_len: 32768
+    is_reasoning_model: true  # uses reasoning field instead of content
+
+  # Qwen3-Coder-Next-FP8 configuration
+  Qwen/Qwen3-Coder-Next-FP8:
+    enabled: true
+    test_suite: "standard"
+    prefer_lightweight: false
+    max_model_len: 131072
+    is_reasoning_model: false
+
+# Standard test cases (for non-GLM models)
+standard_test_cases:
+  - name: "Short Explanation"
+    prompt: "Explain what is Python in 3 sentences."
+    max_tokens: 100
+
+  - name: "Code Generation"
+    prompt: "Write a complete REST API in Python with FastAPI for a todo list. Include models and routes."
+    max_tokens: 500
+
+  - name: "Machine Learning"
+    prompt: "Explain what is machine learning, including the differences between supervised, unsupervised, and reinforcement learning."
+    max_tokens: 300
+
+  - name: "Math Reasoning"
+    prompt: |
+      A train leaves New York for Boston at 60 mph.
+      Another train leaves Boston for New York at 80 mph.
+      They are 280 miles apart.
+      How far from Boston will they meet? Show your work.
+    max_tokens: 200
+
+  - name: "Creative Writing"
+    prompt: "Write a short story about a robot who discovers it has emotions. 300 words."
+    max_tokens: 350
+
+  - name: "Code Explanation"
+    prompt: |
+      Explain what this code does:
+      def quicksort(arr):
+          if len(arr) <= 1:
+              return arr
+          pivot = arr[len(arr) // 2]
+          left = [x for x in arr if x < pivot]
+          middle = [x for x in arr if x == pivot]
+          right = [x for x in arr if x > pivot]
+          return quicksort(left) + middle + quicksort(right)
+    max_tokens: 200
+
+# Lightweight test cases (for GLM)
+lightweight_test_cases:
+  - name: "Code Generation"
+    prompt: "Write a Python function to calculate fibonacci numbers with memoization."
+    max_tokens: 150
+
+  - name: "RESTful API Explanation"
+    prompt: "Explain what is RESTful API and its main characteristics."
+    max_tokens: 200
+
+  - name: "Cache System Design"
+    prompt: "Design a simple cache system. Include cache eviction strategies like LRU and FIFO."
+    max_tokens: 250
+
+  - name: "Bug Fix"
+    prompt: |
+      Find and fix the bug in this code:
+      def find_duplicates(arr):
+          seen = {}
+          for item in arr:
+              if item not in seen:
+                  seen[item] = 1
+              else:
+                  return item
+          return None
+
+      print(find_duplicates([1,2,3,2]))  # Returns 2, correct
+      print(find_duplicates([1,2,3]))    # Returns None, but 2 also appears twice!
+
+      What's wrong and how to fix it?
+    max_tokens: 200
+
+  - name: "Algorithm Challenge"
+    prompt: "Write Python code to reverse a linked list. Include both iterative and recursive approaches."
+    max_tokens: 250
+
+  - name: "Architecture Design"
+    prompt: "Explain the differences between monolithic and microservices architectures. When would you choose one over the other?"
+    max_tokens: 300
+
+# Complex test cases
+complex_test_cases:
+  - name: "Full Backend System"
+    prompt: |
+      Create a complete Python REST API using FastAPI with the following requirements:
+      1. User authentication with JWT
+      2. CRUD operations for a blog system (users, posts, comments)
+      3. SQLite database with SQLAlchemy
+      4. Pydantic models for validation
+      5. Unit tests using pytest
+      6. Docker configuration
+      7. README with setup instructions
+
+      Write the complete code structure with file organization.
+    max_tokens: 800
+
+  - name: "Microservices Architecture"
+    prompt: |
+      Design a microservices architecture for an e-commerce platform. Include:
+      1. Service breakdown (user, catalog, order, payment, inventory, notification)
+      2. API Gateway design
+      3. Database per service pattern
+      4. Message queue integration (RabbitMQ/Kafka)
+      5. Service discovery and load balancing
+      6. Fault tolerance patterns (circuit breaker, retry)
+      7. Monitoring and logging strategy
+
+      Provide detailed technical specifications.
+    max_tokens: 600
+
+  - name: "Complex Algorithms"
+    prompt: |
+      Implement the following algorithms in Python with detailed comments:
+      1. A* (A-star) pathfinding algorithm with heuristic
+      2. Dijkstra's algorithm
+      3. Compare their time complexity
+
+      Include visualization examples and test cases.
+    max_tokens: 700
+
+  - name: "Debug Task"
+    prompt: |
+      Debug and fix this problematic Python code for a concurrent web scraper:
+
+      ```python
+      import threading
+      import requests
+      import time
+
+      urls = [f"https://example.com/page{i}" for i in range(10)]
+
+      def scrape(url):
+          try:
+              r = requests.get(url, timeout=5)
+              return r.text[:100]
+          except Exception as e:
+              return str(e)
+
+      threads = []
+      for url in urls:
+          t = threading.Thread(target=scrape, args=(url,))
+          t.start()
+          threads.append(t)
+          t.join()  # BUG: This makes it sequential!
+
+      print("Done")
+      ```
+
+      Identify all bugs and provide corrected code.
+    max_tokens: 500
+
+  - name: "Data Analysis Report"
+    prompt: |
+      Analyze this dataset description and provide Python code for analysis:
+
+      A retail company has 3 years of sales data with:
+      - 50,000+ transactions
+      - 10 product categories
+      - 5 store locations
+      - Customer demographics
+
+      Tasks:
+      1. Data cleaning and preprocessing
+      2. Sales trend analysis by month
+      3. Top performing categories
+      4. Customer segmentation using clustering
+      5. Sales prediction model
+      6. Visualization recommendations
+
+      Write the complete analysis pipeline.
+    max_tokens: 600
+
+  - name: "System Design Interview"
+    prompt: |
+      Design a URL shortening service like bit.ly. Cover:
+      1. API endpoints design (RESTful)
+      2. Database schema
+      3. Hash function for short codes (collision handling)
+      4. Rate limiting strategy
+      5. Caching layer design
+      6. Analytics tracking
+      7. Horizontal scaling approach
+      8. SLA considerations (99.9% availability)
+
+      Provide implementation details.
+    max_tokens: 600
+
+  - name: "Multi-turn Conversation"
+    prompt: |
+      Act as a senior software engineer and help debug this multi-step problem:
+
+      User: I have a Python app that's slow in production
+      Assistant: How slow? What's the typical response time?
+      User: 2-5 seconds for simple queries
+      Assistant: What kind of queries? Database queries?
+      User: Yes, SELECT queries on a table with 1M+ rows
+      Assistant: Do you have indexes on frequently queried columns?
+      User: We have indexes but they're not being used
+      Assistant: Check the query execution plan with EXPLAIN...
+
+      Continue this debugging conversation with at least 5 more exchanges, providing expert-level solutions.
+    max_tokens: 800
+
+  - name: "Technical Documentation"
+    prompt: |
+      Write comprehensive documentation for a Python CLI tool that:
+      1. Compresses images in various formats (PNG, JPEG, WebP)
+      2. Supports batch processing
+      3. Has quality control settings
+      4. Outputs statistics
+
+      Include:
+      1. Installation guide
+      2. Usage examples
+      3. Configuration options
+      4. API reference for programmatic use
+      5. Performance benchmarks
+    max_tokens: 700
+
+  - name: "Database Optimization"
+    prompt: |
+      A PostgreSQL database with 10M records is experiencing slow queries. The problematic query is:
+
+      ```sql
+      SELECT * FROM orders
+      WHERE customer_id IN (
+          SELECT id FROM customers
+          WHERE country = 'US'
+          AND created_at > '2023-01-01'
+      )
+      AND status = 'completed'
+      ORDER BY created_at DESC
+      LIMIT 100;
+      ```
+
+      1. Identify performance issues
+      2. Propose optimization strategies
+      3. Write the optimized query
+      4. Suggest index improvements
+      5. Consider partitioning strategies
+    max_tokens: 500
+
+  - name: "ML Project"
+    prompt: |
+      Build a complete ML pipeline for customer churn prediction:
+
+      Dataset: Customer data with 50 features including:
+      - Demographics (age, income, location)
+      - Account info (tenure, contract type, payment method)
+      - Usage patterns (monthly charges, service usage)
+      - Historical churn label
+
+      Requirements:
+      1. Exploratory data analysis
+      2. Feature engineering
+      3. Handle class imbalance
+      4. Model selection (compare at least 3 algorithms)
+      5. Hyperparameter tuning
+      6. Model evaluation with multiple metrics
+      7. Feature importance analysis
+      8. Deployment considerations
+
+      Write the end-to-end pipeline code.
+    max_tokens: 800
