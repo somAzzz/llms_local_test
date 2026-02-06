@@ -82,7 +82,7 @@ python scripts/benchmark.py -m "glm-4.7-flash"
 
 ```bash
 # 10 comprehensive test scenarios
-python scripts/benchmark.py -m "glm-4.7-flash --complex
+python scripts/benchmark.py -m "glm-4.7-flash" --complex
 ```
 
 ## Command Line Arguments
