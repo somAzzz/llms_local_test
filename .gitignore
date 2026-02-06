@@ -27,9 +27,6 @@ Thumbs.db
 .env.local
 *.log
 
-# Generated reports
-benchmark_*.md
-!benchmark_glm-4.7-flash.md
 
 # Lock files
 uv.lock
