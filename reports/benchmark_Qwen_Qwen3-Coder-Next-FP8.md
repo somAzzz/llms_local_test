@@ -2,7 +2,7 @@
 
 ## Test Information
 
-- **Test Time**: 2026-02-06 23:10:42
+- **Test Time**: 2026-02-19 17:35:44
 - **Model**: Qwen/Qwen3-Coder-Next-FP8
 - **API URL**: http://localhost:8000/v1/chat/completions
 - **Test Cases**: 10
@@ -20,42 +20,42 @@
 | Metric | Value |
 |--------|-------|
 | Successful Tests | 10/10 |
-| **Avg Generation Speed** | **23.9 tok/s** |
-| Total Time | 345.44s |
+| **Avg Generation Speed** | **147.5 tok/s** |
+| Total Time | 44.73s |
 | Total Tokens | 6600 |
 
 ### Speed Statistics
 
-- **Max**: 26.1 tok/s
-- **Min**: 6.6 tok/s
-- **Median**: 25.8 tok/s
+- **Max**: 147.8 tok/s
+- **Min**: 147.1 tok/s
+- **Median**: 147.6 tok/s
 
 ## Detailed Results
 
 | Test Case | Time | Prompt | Completion | Speed |
 |-----------|------|--------|------------|-------|
-| Full Backend System | 120.56s | 88 | 800 | **6.6** tok/s |
-| Microservices Architecture | 23.43s | 95 | 600 | **25.6** tok/s |
-| Complex Algorithms | 26.92s | 53 | 700 | **26.0** tok/s |
-| Debug Task | 19.36s | 148 | 500 | **25.8** tok/s |
-| Data Analysis Report | 23.11s | 107 | 600 | **26.0** tok/s |
-| System Design Interview | 23.27s | 86 | 600 | **25.8** tok/s |
-| Multi-turn Conversation | 31.35s | 135 | 800 | **25.5** tok/s |
-| Technical Documentation | 27.34s | 84 | 700 | **25.6** tok/s |
-| Database Optimization | 19.46s | 125 | 500 | **25.7** tok/s |
-| ML Project | 30.64s | 133 | 800 | **26.1** tok/s |
+| Full Backend System | 5.42s | 88 | 800 | **147.6** tok/s |
+| Microservices Architecture | 4.06s | 95 | 600 | **147.7** tok/s |
+| Complex Algorithms | 4.73s | 53 | 700 | **147.8** tok/s |
+| Debug Task | 3.40s | 148 | 500 | **147.1** tok/s |
+| Data Analysis Report | 4.07s | 107 | 600 | **147.6** tok/s |
+| System Design Interview | 4.06s | 86 | 600 | **147.7** tok/s |
+| Multi-turn Conversation | 5.42s | 135 | 800 | **147.5** tok/s |
+| Technical Documentation | 4.74s | 84 | 700 | **147.5** tok/s |
+| Database Optimization | 3.40s | 125 | 500 | **147.1** tok/s |
+| ML Project | 5.42s | 133 | 800 | **147.6** tok/s |
 
 ## Test Details
 
 ### Full Backend System
 
-- **Time**: 120.56s
-- **Speed**: 6.6 tok/s
-- **TTFT (est.)**: 12.056s
+- **Time**: 5.42s
+- **Speed**: 147.6 tok/s
+- **TTFT (est.)**: 0.542s
 
 **Response Preview:**
 ```
-Here's a complete, production-ready FastAPI REST API for a blog system with JWT authentication, SQLite database, Pydantic models, pytest tests, and Docker support.
+Here's a complete, production-ready Python REST API using FastAPI with all requested features. I'll provide the full file structure and code.
 
 ---
 
@@ -65,154 +65,156 @@ Here's a complete, production-ready FastAPI REST API for a blog system with JWT 
 fastapi-blog-api/
 ├── app/
 │   ├── __init__.py
-│   ├── main.py                 # FastAPI app entry poi...
+│   ├── main.py                 # FastAPI app entry point
+│   ├── config.py  ...
 ```
 
 ---
 
 ### Microservices Architecture
 
-- **Time**: 23.43s
-- **Speed**: 25.6 tok/s
-- **TTFT (est.)**: 2.343s
+- **Time**: 4.06s
+- **Speed**: 147.7 tok/s
+- **TTFT (est.)**: 0.406s
 
 **Response Preview:**
 ```
-Here's a comprehensive, production-grade microservices architecture design for an e-commerce platform, adhering to modern best practices and scalability requirements.
+Here's a comprehensive, production-grade microservices architecture for an e-commerce platform, designed for scalability, resilience, and maintainability.
 
 ---
 
-## **1. Service Breakdown (Domain-Driven Design)**
+## **1. Service Breakdown & Technical Specifications**
 
-Each service is bounded, autonomous, and follows the *Single Responsibility...
+| Service | Responsibility | Key APIs | Tech Stack | Database |
+|---------|--------...
 ```
 
 ---
 
 ### Complex Algorithms
 
-- **Time**: 26.92s
-- **Speed**: 26.0 tok/s
-- **TTFT (est.)**: 2.692s
+- **Time**: 4.73s
+- **Speed**: 147.8 tok/s
+- **TTFT (est.)**: 0.473s
 
 **Response Preview:**
 ```
-# A* and Dijkstra's Algorithms in Python
+# A* and Dijkstra's Algorithms: Comprehensive Guide
 
-Below is a comprehensive implementation of both algorithms with detailed comments, visualizations, and test cases.
+Below is a detailed implementation of both algorithms with thorough comments, complexity analysis, and visualization examples.
 
 ```python
 import heapq
 import math
 import matplotlib.pyplot as plt
-import numpy as np
-from collections import defaultdict
-
-# =================...
+import matplotlib.patches as patches
+import numpy as...
 ```
 
 ---
 
 ### Debug Task
 
-- **Time**: 19.36s
-- **Speed**: 25.8 tok/s
-- **TTFT (est.)**: 1.936s
+- **Time**: 3.40s
+- **Speed**: 147.1 tok/s
+- **TTFT (est.)**: 0.340s
 
 **Response Preview:**
 ```
-## Bug Analysis
+Looking at this code, there are several issues that need to be addressed:
 
-The main issue is in this line:
-```python
-t.join()  # BUG: This makes it sequential!
-```
+## Bugs Identified:
 
-This is placed **inside the loop** after `t.start()`, which means each thread is started and immediately joined before the next thread starts. This defeats the purpose of concurrency entirely -...
+1. **Main Bug**: `t.join()` inside the loop (line 17) - This causes threads to run sequentially instead of concurrently. Each thread is started and immediately joined, so the next thread doesn't start unt...
 ```
 
 ---
 
 ### Data Analysis Report
 
-- **Time**: 23.11s
-- **Speed**: 26.0 tok/s
-- **TTFT (est.)**: 2.311s
+- **Time**: 4.07s
+- **Speed**: 147.6 tok/s
+- **TTFT (est.)**: 0.407s
 
 **Response Preview:**
 ```
-Here's a complete, production-ready Python analysis pipeline for the retail sales dataset, following best practices for data science projects.
+Here's a **complete, production-ready Python analysis pipeline** for your retail sales dataset. This pipeline covers all requested tasks with best practices, modular design, and clear documentation.
 
-```python
-# =============================================================================
-# RETAIL SALES ANALYSIS PIPELINE
-# ===============================...
+---
+
+### 📦 Assumptions about the Dataset Structure
+We assume the dataset is in a CSV file (`retail_s...
 ```
 
 ---
 
 ### System Design Interview
 
-- **Time**: 23.27s
-- **Speed**: 25.8 tok/s
-- **TTFT (est.)**: 2.327s
+- **Time**: 4.06s
+- **Speed**: 147.7 tok/s
+- **TTFT (est.)**: 0.406s
 
 **Response Preview:**
 ```
-Here's a comprehensive design for a scalable, production-grade URL shortening service (e.g., "Bitly-like"), covering all requested aspects with implementation-level details.
+Here's a comprehensive, production-grade design for a scalable URL shortening service (e.g., "BitlyClone") covering all requested aspects with implementation details.
 
 ---
 
-## 1. RESTful API Endpoints Design
+### **1. RESTful API Endpoints**
 
-### Core Endpoints
-| Method | Endpoint | Description | Request Body | Response |
-|--...
+**Base URL**: `https://api.example.com/v1`
+
+| Method | Endpoint | Description | Request Body ...
 ```
 
 ---
 
 ### Multi-turn Conversation
 
-- **Time**: 31.35s
-- **Speed**: 25.5 tok/s
-- **TTFT (est.)**: 3.135s
+- **Time**: 5.42s
+- **Speed**: 147.5 tok/s
+- **TTFT (est.)**: 0.542s
 
 **Response Preview:**
 ```
-**Assistant**: Great—let’s dig into the `EXPLAIN` output. Can you share the full `EXPLAIN (ANALYZE, BUFFERS)` for one of those slow `SELECT` queries? That’ll tell us if it’s doing a full table scan, if indexes are being considered, and whether there’s I/O pressure.
-
----
-
-**User**: Here’s the output ...
+**Assistant:** Great—let’s dig into the `EXPLAIN` output. Can you share the full `EXPLAIN (ANALYZE, BUFFERS)` output for one of those slow queries? Also, what does your table schema look like (especially the indexed columns and the `WHERE` clause you’re using)? Without seeing the actual plan, we’re ...
 ```
 
 ---
 
 ### Technical Documentation
 
-- **Time**: 27.34s
-- **Speed**: 25.6 tok/s
-- **TTFT (est.)**: 2.734s
+- **Time**: 4.74s
+- **Speed**: 147.5 tok/s
+- **TTFT (est.)**: 0.474s
 
 **Response Preview:**
 ```
-# 📷 `imgcompressor` – High-Performance Image Compression CLI & Library
+# **Imagix: Advanced Image Compression CLI Tool**
 
-A fast, cross-platform Python CLI tool and library for lossy and lossless image compression supporting PNG, JPEG, and WebP formats. Designed for developers, designers, and DevOps engineers who need reliable image optimization in...
+---
+
+## 📦 Table of Contents
+1. [Overview](#overview)
+2. [Installation](#installation)
+3. [Usage Guide](#usage-guide)
+   - [Basic Usage](#basic-usage)
+   - [Batch Processing](#batch-processing)
+   - [Quality Control](#quality-control)
+   - [Statistic...
 ```
 
 ---
 
 ### Database Optimization
 
-- **Time**: 19.46s
-- **Speed**: 25.7 tok/s
-- **TTFT (est.)**: 1.946s
+- **Time**: 3.40s
+- **Speed**: 147.1 tok/s
+- **TTFT (est.)**: 0.340s
 
 **Response Preview:**
 ```
-Let's analyze and optimize this query systematically.
+Let's analyze and optimize this PostgreSQL query systematically.
 
 ---
 
@@ -220,24 +222,27 @@ Let's analyze and optimize this query systematically.
 
 | Issue | Explanation |
 |-------|-------------|
-| **Subquery with `IN`** | PostgreSQL may execute the subquery multiple times or materialize a large intermediate result set. With many US customers, the `IN` li...
+| **Subquery with IN clause** | The `IN (subquery)` forces PostgreSQL to materialize the subquery result and then perform a hash join or nested loop —...
 ```
 
 ---
 
 ### ML Project
 
-- **Time**: 30.64s
-- **Speed**: 26.1 tok/s
-- **TTFT (est.)**: 3.064s
+- **Time**: 5.42s
+- **Speed**: 147.6 tok/s
+- **TTFT (est.)**: 0.542s
 
 **Response Preview:**
 ```
-# End-to-End Customer Churn Prediction Pipeline
+Here's a complete, production-ready ML pipeline for customer churn prediction using Python. This implementation uses `scikit-learn`, `imbalanced-learn`, `xgboost`, `shap`, and follows best practices.
 
-Below is a complete ML pipeline for customer churn prediction that covers all requirements: EDA, feature engineering, class imbalance handling, model comparison, hyperparameter tuning, evaluation, feature importance, and deployment considerations.
+---
 
-``...
+### ✅ **Complete Churn Prediction Pipeline**
+
+```python
+# ====================================...
 ```
 
 ---
@@ -245,9 +250,9 @@ Below is a complete ML pipeline for customer churn prediction that covers all re
 
 ## Conclusion
 
-**Performance Rating**: Average
+**Performance Rating**: Excellent
 
-- Average Speed: 23.9 tok/s
+- Average Speed: 147.5 tok/s
 
 ---
 *Generated by benchmark script*
