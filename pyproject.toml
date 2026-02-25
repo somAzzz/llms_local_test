@@ -3,23 +3,66 @@ name = "llm-benchmark"
 version = "1.0.0"
 description = "Local LLM performance benchmarking toolkit"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12,<3.13"
 dependencies = [
     "requests>=2.31.0",
     "pyyaml>=6.0",
+    "torch==2.10.0",
+    "transformers==5.3.0.dev0",
+    "vllm>=0.15",
 ]
-
-[project.optional-dependencies]
-dev = [
-    "pytest>=7.0.0",
-]
-
-[dependency-groups]
-dev = ["pytest>=7.0.0"]
 
 [tool.uv]
 package = false
+prerelease = "allow"
+# 解决 vLLM 与 Transformers 最新版的版本互斥
+override-dependencies = [
+    "transformers",
+    "torch",
+    "triton"
+]
+
+# PyTorch cu128 stable index
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+# vLLM nightly index
+[[tool.uv.index]]
+name = "vllm-nightly"
+url = "https://wheels.vllm.ai/nightly/"
+explicit = true
+
+# torch 从 PyTorch nightly index 安装
+[tool.uv.sources]
+# Transformers 从 Git 源码直接拉取编译
+transformers = { git = "https://github.com/huggingface/transformers.git" }
+# torch 从 PyTorch cu128 index 安装
+torch = { index = "pytorch-cu128" }
+# vllm 从 nightly index 安装
+vllm = { index = "vllm-nightly" }
 
 [build-system]
 requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "N", "B", "A", "C4", "SIM", "RUF", "PL"]
+ignore = []
+fixable = ["ALL"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+    "ruff>=0.15.2",
+]
