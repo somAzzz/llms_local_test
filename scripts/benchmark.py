@@ -80,6 +80,83 @@ def get_model_config(config: Dict, model_name: str) -> Dict:
     )
 
 
+def save_config(config: Dict) -> bool:
+    """Save configuration to YAML file"""
+    if yaml is None:
+        print("Warning: pyyaml not installed, cannot save config")
+        return False
+
+    try:
+        with open(CONFIG_FILE, "w", encoding="utf-8") as f:
+            yaml.dump(config, f, default_flow_style=False, allow_unicode=True)
+        return True
+    except Exception as e:
+        print(f"Warning: Failed to save config: {e}")
+        return False
+
+
+def add_model_config(config: Dict, model_name: str) -> Dict:
+    """Add new model configuration if not exists"""
+    models = config.get("models", {})
+
+    if model_name in models:
+        return config
+
+    # Determine if it's a reasoning model (GLM series uses reasoning field)
+    is_reasoning_model = "glm" in model_name.lower()
+
+    # Determine test suite based on model name patterns
+    if is_reasoning_model:
+        test_suite = "lightweight"
+        prefer_lightweight = True
+        max_model_len = 32768
+    elif "coder" in model_name.lower():
+        test_suite = "standard"
+        prefer_lightweight = False
+        max_model_len = 131072
+    else:
+        test_suite = "standard"
+        prefer_lightweight = False
+        max_model_len = 65536
+
+    # Add new model configuration
+    models[model_name] = {
+        "enabled": True,
+        "test_suite": test_suite,
+        "prefer_lightweight": prefer_lightweight,
+        "max_model_len": max_model_len,
+        "is_reasoning_model": is_reasoning_model,
+    }
+
+    config["models"] = models
+
+    # Update default model if this is the first model
+    if not config.get("model", {}).get("default"):
+        config.setdefault("model", {})["default"] = model_name
+
+    return config
+
+
+def update_config_for_model(config: Dict, model_name: str) -> bool:
+    """Update config file with new model configuration if needed"""
+    models = config.get("models", {})
+
+    if model_name not in models:
+        print(f"  New model detected: {model_name}")
+        print(f"  Adding model configuration to config file...")
+
+        config = add_model_config(config, model_name)
+
+        if save_config(config):
+            print(f"  [OK] Config updated with {model_name}")
+            return True
+        else:
+            print(f"  [X] Failed to update config")
+            return False
+
+    return False
+
+
 def get_available_models(api_url: str) -> List[str]:
     """Get list of available models"""
     try:
@@ -360,6 +437,18 @@ def main():
         default=CONFIG_FILE,
         help=f"Config file path (default: {CONFIG_FILE})",
     )
+    parser.add_argument(
+        "--auto-update",
+        action="store_true",
+        default=True,
+        help="Auto-update config when new model detected (default: enabled)",
+    )
+    parser.add_argument(
+        "--no-auto-update",
+        action="store_false",
+        dest="auto_update",
+        help="Disable auto-update of config file",
+    )
     args = parser.parse_args()
 
     config = load_config()
@@ -371,10 +460,6 @@ def main():
     # Create reports directory if it doesn't exist
     reports_dir = os.path.join(os.path.dirname(__file__), "..", "reports")
     os.makedirs(reports_dir, exist_ok=True)
-
-    report_file = args.report or os.path.join(
-        reports_dir, f"benchmark_{default_model.replace('/', '_')}.md"
-    )
 
     if not args.model:
         available = get_available_models(api_url)
@@ -394,8 +479,19 @@ def main():
         else:
             args.model = default_model
 
+    # Auto-update config if new model detected
+    if args.auto_update:
+        update_config_for_model(config, args.model)
+        # Reload config to get updated model config
+        config = load_config()
+
     model_cfg = get_model_config(config, args.model)
     is_reasoning_model = model_cfg.get("is_reasoning_model", False)
+
+    # Set report filename based on actual model being tested
+    report_file = args.report or os.path.join(
+        reports_dir, f"benchmark_{args.model.replace('/', '_')}.md"
+    )
 
     if args.complex:
         test_suite = "complex"
