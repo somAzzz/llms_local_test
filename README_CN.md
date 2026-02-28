@@ -23,10 +23,11 @@
 
 ## 支持的模型
 
-| 模型 | HF 链接 | 架构 | 速度 (RTX 6000) |
-|-----|--------|------|-----------------|
-| GLM-4.7-Flash | [zai-org/GLM-4.7-Flash](https://huggingface.co/zai-org/GLM-4.7-Flash) | Transformer | ~110 tok/s |
-| Qwen3-Coder-Next-FP8 | [Qwen/Qwen3-Coder-Next-FP8](https://huggingface.co/Qwen/Qwen3-Coder-Next-FP8) | Mamba2 | ~25 tok/s |
+| 模型 | HF 链接 | 架构 | 速度 (RTX PRO 6000) |
+|-----|--------|------|---------------------|
+| GLM-4.7-Flash | [zai-org/GLM-4.7-Flash](https://huggingface.co/zai-org/GLM-4.7-Flash) | Transformer | 112.9 tok/s |
+| Qwen3.5-35B-A3B | [Qwen/Qwen3.5-35B-A3B](https://huggingface.co/Qwen/Qwen3.5-35B-A3B) | Transformer | 165.7 tok/s |
+| Qwen3-Coder-Next-FP8 | [Qwen/Qwen3-Coder-Next-FP8](https://huggingface.co/Qwen/Qwen3-Coder-Next-FP8) | Mamba2 | 138.6 tok/s |
 
 ## 目录结构
 
