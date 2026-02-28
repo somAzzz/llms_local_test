@@ -1,6 +1,10 @@
 api:
   timeout: 300
-  url: http://localhost:8000/v1/chat/completions
+  backend: vllm  # vllm or sglang
+  port: 8000     # API port
+  host: localhost
+  # Full URL (takes precedence if set)
+  # url: http://localhost:8000/v1/chat/completions
 complex_test_cases:
 - max_tokens: 800
   name: Full Backend System

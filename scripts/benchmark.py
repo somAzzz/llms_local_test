@@ -43,8 +43,30 @@ def load_config() -> Dict:
 
 
 def get_api_url(config: Dict) -> str:
-    """Get API URL from config"""
-    return config.get("api", {}).get("url", "http://localhost:8000/v1/chat/completions")
+    """Get API URL from config - supports both full URL and individual components"""
+    api_config = config.get("api", {})
+
+    # If full URL is explicitly set, use it
+    if api_config.get("url"):
+        return api_config["url"]
+
+    # Build URL from components
+    host = api_config.get("host", "localhost")
+    port = api_config.get("port", 8000)
+    backend = api_config.get("backend", "vllm")
+
+    # sglang uses /v1/chat/completions same as vLLM
+    return f"http://{host}:{port}/v1/chat/completions"
+
+
+def get_api_backend(config: Dict) -> str:
+    """Get API backend type (vllm or sglang)"""
+    return config.get("api", {}).get("backend", "vllm")
+
+
+def get_api_port(config: Dict) -> int:
+    """Get API port"""
+    return config.get("api", {}).get("port", 8000)
 
 
 def get_api_timeout(config: Dict) -> int:
@@ -423,7 +445,9 @@ def get_gpu_info() -> Dict:
 
 def main():
     parser = argparse.ArgumentParser(description="LLM Performance Benchmark Script")
-    parser.add_argument("--api-url", "-u", default=None, help="API URL")
+    parser.add_argument("--api-url", "-u", default=None, help="Full API URL (overrides backend/port)")
+    parser.add_argument("--backend", "-b", default=None, choices=["vllm", "sglang"], help="API backend type")
+    parser.add_argument("--port", "-p", type=int, default=None, help="API port (default: 8000 for vllm, 30000 for sglang)")
     parser.add_argument("--model", "-m", default=None, help="Model name to test")
     parser.add_argument("--report", "-r", default=None, help="Report output filename")
     parser.add_argument(
@@ -453,7 +477,28 @@ def main():
 
     config = load_config()
 
-    api_url = args.api_url or get_api_url(config)
+    # Build API URL from components if not explicitly provided
+    if args.api_url:
+        api_url = args.api_url
+    else:
+        # Get config values
+        api_config = config.get("api", {})
+        host = "localhost"
+
+        # Determine backend: CLI > config > default
+        backend = args.backend or api_config.get("backend", "vllm")
+
+        # Determine port: CLI > backend default (not config!)
+        if args.port is not None:
+            port = args.port
+        else:
+            if backend == "sglang":
+                port = 30000  # sglang default port
+            else:
+                port = 8000   # vllm default port
+
+        api_url = f"http://{host}:{port}/v1/chat/completions"
+
     timeout = get_api_timeout(config)
     default_model = args.model or get_default_model(config)
 
@@ -519,6 +564,9 @@ def main():
     print(f"LLM Performance Benchmark - {args.model}")
     print("=" * 60)
     print()
+    # Extract backend and port from URL for display
+    backend_type = "sglang" if ":30000" in api_url else "vllm"
+    print(f"Backend: {backend_type}")
     print(f"API: {api_url}")
     print(f"Model: {args.model}")
     print(f"Test Cases: {len(test_cases)}")
@@ -527,7 +575,7 @@ def main():
     print("Checking API connection...")
     if not check_api_status(api_url, args.model):
         print(f"[X] Cannot connect to {api_url} or model {args.model}")
-        print("Please ensure vLLM server is running")
+        print("Please ensure the API server is running")
         sys.exit(1)
     print("[OK] API available")
     print()
