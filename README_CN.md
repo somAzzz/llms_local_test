@@ -7,9 +7,11 @@
 ## 功能特性
 
 - 多模型支持（Qwen、GLM 等）
+- 多后端支持（vLLM、SGLang）
 - 标准化性能测试
 - 自动生成 Markdown 报告
 - 复杂综合测试场景
+- 自动更新配置以支持新模型
 
 ## 环境要求
 
@@ -90,10 +92,15 @@ python scripts/benchmark.py -m "glm-4.7-flash" --complex
 | 参数 | 说明 | 默认值 |
 |-----|------|-------|
 | `-m, --model` | 模型名称 | 自动检测 |
-| `-u, --api-url` | API 地址 | http://localhost:8000/v1/chat/completions |
+| `-u, --api-url` | 完整 API 地址 | 根据 backend/port 构建 |
+| `-b, --backend` | API 后端 (vllm/sglang) | vllm |
+| `-p, --port` | API 端口 | 8000 (vllm) / 30000 (sglang) |
 | `-r, --report` | 报告文件名 | auto |
 | `-c, --cases` | 测试用例数量 | 6 |
 | `-x, --complex` | 复杂测试模式 | False |
+| `--config` | 配置文件路径 | scripts/benchmark_config.yaml |
+| `--auto-update` | 自动更新配置 | 启用 |
+| `--no-auto-update` | 禁用自动更新 | - |
 
 ## API 调用差异
 
@@ -123,6 +130,54 @@ python scripts/benchmark.py -m "glm-4.7-flash" --complex
 - **标准格式**: 标准 OpenAI 兼容响应
 - **架构**: Mamba2，推理速度较慢但代码能力强
 
+## 多后端使用
+
+### 使用 vLLM 测试（默认，端口 8000）
+
+```bash
+# 自动检测模型
+python scripts/benchmark.py
+
+# 显式指定 vLLM
+python scripts/benchmark.py --backend vllm
+python scripts/benchmark.py -b vllm
+
+# 指定端口
+python scripts/benchmark.py --port 8000
+python scripts/benchmark.py -p 8000
+```
+
+### 使用 SGLang 测试（端口 30000）
+
+```bash
+# 使用 backend 参数
+python scripts/benchmark.py --backend sglang
+python scripts/benchmark.py -b sglang
+
+# 使用端口参数（自动识别 sglang）
+python scripts/benchmark.py --port 30000
+python scripts/benchmark.py -p 30000
+
+# 复杂测试 + sglang
+python scripts/benchmark.py -x --backend sglang
+python scripts/benchmark.py -x -b sglang
+
+# 使用完整 URL（覆盖其他设置）
+python scripts/benchmark.py --api-url http://localhost:30000/v1/chat/completions
+```
+
+### 自动更新配置
+
+当检测到新模型时，脚本会自动将其添加到配置文件中：
+
+```bash
+# 启用自动更新（默认）
+python scripts/benchmark.py --auto-update
+
+# 禁用自动更新
+python scripts/benchmark.py --no-auto-update
+```
+
 ## 启动 vLLM 服务
 
 ```bash
@@ -144,6 +199,26 @@ CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=0 vllm serve Qwen/Qwen3-Coder-
   --enforce-eager \
   --enable-auto-tool-choice \
   --tool-call-parser qwen3_coder \
+  --max-model-len 131072
+```
+
+## 启动 SGLang 服务
+
+```bash
+# 使用 Docker 运行 SGLang
+docker run -d --gpus all \
+  -v ~/.cache/huggingface:/root/.cache/huggingface \
+  --network host \
+  --name sglang \
+  lmsysorg/sglang:latest \
+  python -m sglang.launcher \
+  --model Qwen/Qwen3-Coder-Next-FP8 \
+  --port 30000
+
+# 或直接运行 sglang
+python -m sglang.launcher \
+  --model Qwen/Qwen3-Coder-Next-FP8 \
+  --port 30000 \
   --max-model-len 131072
 ```
 

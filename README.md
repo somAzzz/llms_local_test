@@ -7,9 +7,11 @@ Local LLM model performance testing toolkit with multi-model comparison support.
 ## Features
 
 - Multi-model support (Qwen, GLM, etc.)
+- Multi-backend support (vLLM, SGLang)
 - Standardized performance testing
 - Auto-generated Markdown reports
 - Complex comprehensive test scenarios
+- Auto-update config for new models
 
 ## Environment Requirements
 
@@ -90,10 +92,15 @@ python scripts/benchmark.py -m "glm-4.7-flash" --complex
 | Argument | Description | Default |
 |----------|-------------|---------|
 | `-m, --model` | Model name | Auto-detect |
-| `-u, --api-url` | API URL | http://localhost:8000/v1/chat/completions |
+| `-u, --api-url` | Full API URL | Built from backend/port |
+| `-b, --backend` | API backend (vllm/sglang) | vllm |
+| `-p, --port` | API port | 8000 (vllm) / 30000 (sglang) |
 | `-r, --report` | Report filename | Auto |
 | `-c, --cases` | Number of test cases | 6 |
 | `-x, --complex` | Complex test mode | False |
+| `--config` | Config file path | scripts/benchmark_config.yaml |
+| `--auto-update` | Auto-update config | Enabled |
+| `--no-auto-update` | Disable auto-update | - |
 
 ## API Differences
 
@@ -123,6 +130,54 @@ python scripts/benchmark.py -m "glm-4.7-flash" --complex
 - **Standard format**: Standard OpenAI-compatible response
 - **Architecture**: Mamba2, slower inference but stronger coding ability
 
+## Multi-Backend Usage
+
+### Test with vLLM (default, port 8000)
+
+```bash
+# Auto-detect model
+python scripts/benchmark.py
+
+# Explicitly specify vLLM
+python scripts/benchmark.py --backend vllm
+python scripts/benchmark.py -b vllm
+
+# With custom port
+python scripts/benchmark.py --port 8000
+python scripts/benchmark.py -p 8000
+```
+
+### Test with SGLang (port 30000)
+
+```bash
+# Using backend flag
+python scripts/benchmark.py --backend sglang
+python scripts/benchmark.py -b sglang
+
+# Using port (auto-detects sglang)
+python scripts/benchmark.py --port 30000
+python scripts/benchmark.py -p 30000
+
+# Complex test with sglang
+python scripts/benchmark.py -x --backend sglang
+python scripts/benchmark.py -x -b sglang
+
+# Full URL (override)
+python scripts/benchmark.py --api-url http://localhost:30000/v1/chat/completions
+```
+
+### Auto-Update Config
+
+When a new model is detected, the script automatically adds it to the config file:
+
+```bash
+# Enable auto-update (default)
+python scripts/benchmark.py --auto-update
+
+# Disable auto-update
+python scripts/benchmark.py --no-auto-update
+```
+
 ## Start vLLM Server
 
 ```bash
@@ -144,6 +199,26 @@ CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=0 vllm serve Qwen/Qwen3-Coder-
   --enforce-eager \
   --enable-auto-tool-choice \
   --tool-call-parser qwen3_coder \
+  --max-model-len 131072
+```
+
+## Start SGLang Server
+
+```bash
+# SGLang with Docker
+docker run -d --gpus all \
+  -v ~/.cache/huggingface:/root/.cache/huggingface \
+  --network host \
+  --name sglang \
+  lmsysorg/sglang:latest \
+  python -m sglang.launcher \
+  --model Qwen/Qwen3-Coder-Next-FP8 \
+  --port 30000
+
+# Or run directly with sglang
+python -m sglang.launcher \
+  --model Qwen/Qwen3-Coder-Next-FP8 \
+  --port 30000 \
   --max-model-len 131072
 ```
 
